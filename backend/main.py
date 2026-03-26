@@ -22,13 +22,14 @@ class ChatRequest(BaseModel):
 
 @app.on_event("startup")
 async def startup():
-    db_path = os.path.join(os.path.dirname(__file__), "o2c.db")
-    if not os.path.exists(db_path):
-        print("🔄 First run - loading data...")
-        init_db()
-        load_all_data()
-    else:
-        print("✅ Database already exists, skipping load")
+
+    print("Initializing database...")
+
+    init_db()
+
+    load_all_data()
+
+    print("Data loaded successfully")
 
 @app.get("/api/graph")
 def graph(limit: int = 200):
