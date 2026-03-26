@@ -1,115 +1,299 @@
-# AI Order-to-Cash Graph Intelligence System
+# O2C Graph AI Explorer
 
 ## Overview
 
-This project implements an AI-powered Order-to-Cash (O2C) analytics platform combining graph visualization with LLM-powered natural language querying.
+O2C Graph AI Explorer is an AI-powered graph exploration tool designed to analyze the SAP Order-to-Cash (O2C) process. The system allows users to visualize relationships between business entities such as customers, sales orders, deliveries, billing documents, journal entries, and payments.
 
-The system allows users to:
-• Explore SAP O2C relationships via graph visualization
-• Query business data using natural language
-• Automatically generate SQL using LLM
-• Analyze customers, orders, billing and payments
+The application combines:
+- Graph visualization
+- Natural language querying
+- SQL generation using LLM
+- Relationship exploration
+
+Users can:
+- Explore entity relationships visually
+- Ask natural language questions
+- View generated SQL queries
+- Inspect returned data
+
+---
+
+## Live Demo
+
+Frontend:
+https://o2c-graph-ai.vercel.app
+
+Backend API:
+https://o2c-graph-ai-1.onrender.com/docs
+
+Note:
+Backend may take 30-60 seconds to wake up due to free hosting tier.
+
+---
 
 ## Architecture
 
-Frontend:
-React + Vite
+System architecture follows a simple 3-layer design:
 
-Backend:
-FastAPI Python service
+Frontend (React + Vite)
+        |
+Backend API (FastAPI)
+        |
+SQLite Database + LLM
 
-Database:
-SQLite relational database
+### Frontend
+Technology:
+- React
+- Vite
+- Vis Network Graph Library
+- Axios
 
-AI Layer:
-Google Gemini LLM for SQL generation
+Responsibilities:
+- Graph visualization
+- Chat interface
+- Node inspection
+- API communication
 
-Architecture flow:
+### Backend
+Technology:
+- FastAPI
+- Python
+- SQLite
+- Gemini LLM
 
-React UI → FastAPI → LLM SQL Generator → SQLite → Graph Builder → UI
+Responsibilities:
+- Data loading
+- Graph building
+- SQL generation
+- Question answering
+- Guardrails enforcement
 
-## Database Choice
+### Database
 
-SQLite was selected due to:
-• Simplicity
-• Zero configuration
-• Relational nature of SAP O2C data
-• Fast local querying
+Technology:
+SQLite
 
-## LLM Prompt Strategy
+Why SQLite:
+- Lightweight
+- No infrastructure required
+- Suitable for read-heavy dataset
+- Easy deployment
+- Good for prototyping
 
-The LLM is used strictly for SQL generation.
+---
 
-Techniques used:
+## Graph Modelling
 
-• Schema grounded prompting
-• SQL only responses
-• LIMIT enforcement
-• Table mapping rules
-• Fallback deterministic queries
+Entities modeled:
+
+BusinessPartner  
+SalesOrder  
+SalesOrderItem  
+Delivery  
+DeliveryItem  
+BillingDocument  
+JournalEntry  
+Payment  
+Product  
+Plant  
+
+Relationships modeled:
+
+Customer → SalesOrder  
+SalesOrder → Items  
+Items → Products  
+Items → Delivery  
+Delivery → Plant  
+Billing → JournalEntry  
+JournalEntry → Payment  
+
+Graph design allows exploration of full O2C lifecycle.
+
+---
+
+## LLM Integration Strategy
+
+The LLM is used only for:
+
+Natural language → SQL translation  
+Answer explanation
+
+The LLM is NOT allowed to:
+- Modify database
+- Execute unsafe queries
+- Access external data
+
+Prompt includes:
+
+Database schema  
+Table relationships  
+Allowed query types  
+Response format rules  
+
+Example workflow:
+
+User question  
+→ Prompt constructed with schema  
+→ LLM generates SQL  
+→ SQL validated  
+→ Query executed  
+→ Result returned  
+
+---
+
+## Prompt Engineering Strategy
+
+Prompt contains:
+
+Role definition:
+"You are a data analyst for SAP Order-to-Cash data."
+
+Schema context:
+Tables and relationships.
+
+Rules:
+Only SELECT queries.
+No modifications.
+
+Output format:
+SQL + explanation.
+
+Fallback:
+Return NOT_RELATED if question invalid.
+
+This ensures safe and relevant SQL generation.
+
+---
 
 ## Guardrails
 
-Implemented safeguards:
+Multiple safety guardrails implemented:
 
-• Schema restricted prompting
-• Query limits
-• SQL validation
-• Fallback rule engine
-• Dataset scope restriction
+Query Guardrails:
+- Only SELECT allowed
+- Block INSERT/DELETE/UPDATE
+- Block DROP/ALTER
+- Limit result size
+
+Question Guardrails:
+- Reject unrelated questions
+- Reject non-O2C topics
+- Schema restricted answering
+
+Execution Guardrails:
+- SQL validation before execution
+- Exception handling
+- Safe fallback responses
+
+LLM Guardrails:
+- Schema constrained prompting
+- Deterministic output format
+- Query verification
+
+---
 
 ## AI Usage
 
-AI tools used:
+AI tools were actively used during development.
+
+Tools used:
 
 ChatGPT:
-Architecture design
-Debugging
-Prompt refinement
+Architecture planning  
+Debugging  
+Prompt design  
+Deployment fixes  
+CORS troubleshooting  
+Data loading debugging  
 
-Gemini:
-SQL generation
-Answer explanations
+AI was used for:
 
-GitHub Copilot:
-Code completion
+Code improvements  
+Error debugging  
+SQL prompting design  
+Architecture decisions  
+Deployment troubleshooting  
 
-## Features
+Development approach:
 
-Graph visualization
-AI SQL query generation
-Document lookup
-Business partner analysis
-Payment tracking
+Design → Build → Test → Debug → Improve.
 
-## Setup
+---
+
+## Challenges Faced
+
+Key challenges:
+
+CORS issues between Vercel and Render  
+Data loading in cloud environment  
+LLM query reliability  
+Graph performance optimization  
+Deployment debugging  
+
+Solutions:
+
+Explicit CORS configuration  
+Absolute data paths  
+SQL validation layer  
+Graph limits  
+Structured prompts  
+
+---
+
+## Key Engineering Decisions
+
+Why FastAPI:
+Fast development
+Async support
+Easy deployment
+Simple routing
+
+Why Graph:
+O2C is relationship heavy.
+Graph makes lifecycle visible.
+
+Why LLM SQL generation:
+Natural language improves usability.
+
+Why SQLite:
+Simple deployment.
+Dataset size manageable.
+
+Why separated layers:
+Maintainability.
+Testability.
+Scalability.
+
+---
+
+## Running Locally
 
 Backend:
 
+Navigate:
+backend
+
+Install:
+
 pip install -r requirements.txt
+
+Run:
 
 uvicorn main:app --reload
 
 Frontend:
 
+Navigate:
+frontend
+
+Install:
+
 npm install
+
+Run:
 
 npm run dev
 
-## Example Questions
+---
 
-show customers
-
-show sales orders
-
-show journal entries
-
-find journal entry 91150187
-
-## Demo
-
-Frontend:
-(Add Vercel link)
-
-Backend:
-(Add Render link)
+## Project Structure
