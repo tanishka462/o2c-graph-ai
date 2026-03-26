@@ -28,7 +28,7 @@ export default function GraphCanvas({ onNodeSelect }) {
 
   async function fetchGraph() {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/api/graph?limit=300");
+      const res = await axios.get("https://o2c-graph-ai-1.onrender.com/api/graph");
       const { nodes, edges } = res.data;
       setStats({ nodes: nodes.length, edges: edges.length });
       buildNetwork(nodes, edges);
@@ -129,7 +129,7 @@ export default function GraphCanvas({ onNodeSelect }) {
   async function fetchNodeDetails(nodeId, nodeType) {
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/api/node/${nodeType}/${encodeURIComponent(nodeId)}`
+        `https://o2c-graph-ai-1.onrender.com/api/node/${nodeType}/${encodeURIComponent(nodeId)}`
       );
       setNodeInfo({ id: nodeId, type: nodeType, ...res.data });
     } catch (e) {

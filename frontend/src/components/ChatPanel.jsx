@@ -31,7 +31,7 @@ export default function ChatPanel({ selectedNode }) {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/chat", {
+      const res = await axios.post("https://o2c-graph-ai-1.onrender.com/api/chat", {
         question: userMsg,
       });
 
