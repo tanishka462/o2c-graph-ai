@@ -3,10 +3,12 @@ import json
 import sqlite3
 from database import get_connection, init_db
 
-DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "sap-order-to-cash-dataset", "sap-o2c-data")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATA_PATH = os.path.join(BASE_DIR, "..", "data")
 
 def load_jsonl(folder_name):
-    folder = os.path.join(DATA_PATH, folder_name)
+    folder = os.path.join(DATA_PATH, "sap-order-to-cash-dataset", "sap-o2c-data", folder_name)
     records = []
     if not os.path.exists(folder):
         print(f"⚠️ Folder not found: {folder}")
